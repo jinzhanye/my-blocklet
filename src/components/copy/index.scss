@@ -1,3 +1,13 @@
+@mixin ellipse($count: 1) {
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: normal;
+  -webkit-line-clamp: $count;
+}
+
 .copy {
   display: inline-flex;
   align-items: center;
@@ -9,6 +19,7 @@
   }
 
   > span {
+    @include ellipse(1);
     margin-right: 2px;
   }
 

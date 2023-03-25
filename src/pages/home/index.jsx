@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import './index.scss';
+import ReactPaginate from 'react-paginate';
 import Copy from '../../components/copy';
+// import Pager from '../../components/pager';
 
-let testTx = [
+let testTxs = [
   {
     hash: 'ecbaf13b3c726f7f3b03bc2578def60dc6c41259bc07ac4af2a6a7bfc09ce337',
     ver: 2,
@@ -107,7 +109,10 @@ let testTx = [
   },
 ];
 
-testTx = testTx.concat(testTx).concat(testTx);
+testTxs = testTxs.concat(testTxs).concat(testTxs);
+testTxs = testTxs.concat(testTxs).concat(testTxs);
+testTxs = testTxs.concat(testTxs).concat(testTxs);
+testTxs = testTxs.concat(testTxs).concat(testTxs);
 
 function formatId(rawData) {
   if (!rawData) {
@@ -198,7 +203,7 @@ function getOutputSumBtcText(toArr) {
 }
 
 function formatData(rawData) {
-  return rawData?.map((item) => {
+  return rawData?.map((item, index) => {
     const { hash, time, inputs, out, fee } = item;
     const id = formatId(hash);
     const timeText = dayjs(time).format('DD/MM/YYYY HH:mm:ss');
@@ -209,6 +214,7 @@ function formatData(rawData) {
 
     return {
       id,
+      index,
       timeText,
       inputText,
       isInputIdExist,
@@ -230,33 +236,60 @@ function formatData(rawData) {
   });
 }
 
-export default function Index() {
+export default function Home() {
+  const [inputValue, setInputValue] = useState('');
   const [openFlags, setOpenFlags] = useState(new Array(10).fill(false));
-
-  const arr = formatData(testTx);
-  // const hashVal = '00000000000000000007878ec04bb2b2e12317804810f4c26033585b3f81ffaa';
-  // fetch(`https://blockchain.info/rawblock/${hashVal}`)
-  //   .then((response) => response.json())
-  //   .then((result) => {
-  //     console.log('result', result);
-  //   });
+  const [txs, setTxs] = useState(formatData(testTxs));
+  // setTxs(formatData(testTxs));
 
   const toggle = (txItemIndex) => {
     const newOpenFlags = [...openFlags];
     newOpenFlags[txItemIndex] = !newOpenFlags[txItemIndex];
-    console.log('newOpenFlags:', newOpenFlags);
     setOpenFlags(newOpenFlags);
+  };
+
+  const onSearch = async () => {
+    // const hashVal = '00000000000000000007878ec04bb2b2e12317804810f4c26033585b3f81ffaa';
+
+    try {
+      // const response = await fetch(`https://blockchain.info/rawblock/${inputValue}`);
+      // const result = await response.json();
+      // setTxs(formatData(result?.tx));
+      setTxs(formatData(testTxs));
+    } catch (err) {
+      alert('fetch data error, please try again');
+    }
+  };
+
+  const itemsPerPage = 6;
+  const [itemOffset, setItemOffset] = useState(0);
+  const endOffset = itemOffset + itemsPerPage;
+  const currentTxs = txs.slice(itemOffset, endOffset);
+
+  const pageCount = Math.ceil(txs.length / itemsPerPage);
+
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % txs.length;
+    setItemOffset(newOffset);
   };
 
   return (
     <div className="home">
-      <div>
-        <input type="text" />
-        <div className="search-button">Search</div>
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Please input hash"
+          onChange={(evt) => {
+            setInputValue(evt.target.value);
+          }}
+        />
+        <div className="search-button" onClick={onSearch}>
+          Search
+        </div>
       </div>
 
       <div className="list">
-        {arr.map((txItem, txItemIndex) => {
+        {currentTxs.map((txItem, txItemLoopIndex) => {
           const openHeight = `${
             Math.max(txItem.inputOutput[0].arr.length, txItem.inputOutput[1].arr.length) * 50 + 40
           }px`;
@@ -264,25 +297,25 @@ export default function Index() {
           return (
             <div
               className="list-item"
-              key={txItemIndex}
+              key={txItem.index}
               onClick={() => {
-                toggle(txItemIndex);
+                toggle(txItemLoopIndex);
               }}>
               <div className="list-item-row-1">
                 {/* <div className="avatar" /> */}
 
-                {txItemIndex.isInputIdExist ? (
+                {txItem.isInputIdExist ? (
                   <div className="avatar-tx">TX</div>
                 ) : (
                   <div className="avatar-block-reward">
-                    <div className="avatar-block-reward-icon"></div>
+                    <div className="avatar-block-reward-icon" />
                   </div>
                 )}
 
                 <div className="list-item-container">
                   <div>
                     <div className="list-item-base">
-                      <span className="mr4">{txItemIndex}</span>
+                      <span className="mr4">{txItem.index}</span>
                       <span className="grey mr5">ID:</span>
                       <Copy text={txItem.id} />
                     </div>
@@ -314,12 +347,12 @@ export default function Index() {
                   </div>
                 </div>
 
-                <div className={`${openFlags[txItemIndex] ? 'icon-arrow-up' : 'icon-arrow-down'}`}/>
+                <div className={`${openFlags[txItemLoopIndex] ? 'icon-arrow-up' : 'icon-arrow-down'}`} />
               </div>
 
               <div
-                className={`list-item-row-2 ${openFlags[txItemIndex] ? 'list-item-row-2--open' : ''}`}
-                style={{ height: `${openFlags[txItemIndex] ? openHeight : '0'}` }}>
+                className={`list-item-row-2 ${openFlags[txItemLoopIndex] ? 'list-item-row-2--open' : ''}`}
+                style={{ height: `${openFlags[txItemLoopIndex] ? openHeight : '0'}` }}>
                 {txItem.inputOutput.map((item, itemIndex) => {
                   return (
                     <div key={itemIndex} className="in-and-out-container">
@@ -328,9 +361,10 @@ export default function Index() {
                         {item.arr.map((record, recordIndex) => {
                           return (
                             <div key={recordIndex} className="record-container">
-                              <strong>{recordIndex + 1}</strong>
-                              <div>
-                                <div>{record.id}</div>
+                              <strong className="record-num">{recordIndex + 1}</strong>
+                              <div className="record-info">
+                                {record.isIdExist ? <Copy text={record.id} /> : <div>{record.id}</div>}
+
                                 <div>{record.btcText}</div>
                               </div>
                             </div>
@@ -344,6 +378,18 @@ export default function Index() {
             </div>
           );
         })}
+      </div>
+
+      <div className="pager">
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel=">"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={3}
+          pageCount={pageCount}
+          previousLabel="<"
+          renderOnZeroPageCount={null}
+        />
       </div>
     </div>
   );

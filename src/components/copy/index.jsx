@@ -9,7 +9,8 @@ export default function Index(props) {
   return (
     <div
       className="copy"
-      onClick={() => {
+      onClick={(evt) => {
+        evt.stopPropagation();
         copy(props.text);
       }}>
       <span>{props.text}</span>

@@ -1,35 +1,27 @@
-$grey: #999999;
 $border-grey: rgb(238, 238, 238);
 
-.flex-row {
-  display: flex;
-}
-
-
-.mr4 {
-  margin-right: 4px;
-}
-
-.mr5 {
-  margin-right: 5px;
-}
-
-.grey {
-  color: $grey;
-}
-
-
 .home {
-  padding: 10px;
+  padding: 10px 0;
+
+  .search-container {
+    display: flex;
+    margin-bottom: 20px;
+
+    > input {
+      width: 80%;
+    }
+
+    .search-button {
+      cursor: pointer;
+      //background: ;
+    }
+  }
 
   .list {
     font-size: 13.6px;
   }
 
   .list-item {
-    border-bottom: 1px solid $border-grey;
-
-
     &:first-child {
       border-top: 1px solid $border-grey;
     }
@@ -37,32 +29,21 @@ $border-grey: rgb(238, 238, 238);
 
   .list-item-row-1 {
     display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid $border-grey;
   }
 
   .list-item-container {
     text-align: left;
     flex: 1;
-    display: flex;
-    justify-content: space-between;
-
-
-    //display: grid;
-    //grid-template-columns: 33.333% 1fr min-content;
-    //grid-template-rows: max-content;
-    //opacity: 1;
-    //width: 100%;
-    //gap: 0 5px;
+    display: grid;
+    grid-template-columns: 33.333% 1fr min-content;
+    gap: 0 5px;
+    width: 100%;
   }
 
-  //.list-item-base {
-  //  > span {
-  //    margin-right: 5px;
-  //  }
-  //}
-
-
-
   @mixin avatar-common {
+    margin: 0 16px;
     height: 40px;
     width: 40px;
     border-radius: 50%;
@@ -133,27 +114,41 @@ $border-grey: rgb(238, 238, 238);
     transition: height 0.25s ease-in 0s;
 
     &--open {
-      border-top: 1px solid $border-grey;
       height: 215px;
+      border-bottom: 1px solid $border-grey;
     }
   }
 
   .in-and-out-container {
-    padding-left: 8px;
+    padding: 8px 12px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     flex: 1;
     flex-shrink: 0;
+    overflow: hidden;
 
     &:first-child {
       border-right: 1px solid $border-grey;
     }
   }
 
-  .record-container {
-    display: flex;
-    margin-top: 10px;
-    margin-bottom: 10px;
+  .record {
+    &-container {
+      display: flex;
+      margin-top: 10px;
+      margin-bottom: 10px;
+   }
+
+    &-num {
+      margin-right: 14px;
+    }
+
+    &-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
   }
 }
