@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import './index.scss';
 import ReactPaginate from 'react-paginate';
 import Copy from '../../components/copy';
-// import Pager from '../../components/pager';
 
 let testTxs = [
   {
@@ -255,9 +254,9 @@ export default function Home() {
     // const hashVal = '00000000000000000007878ec04bb2b2e12317804810f4c26033585b3f81ffaa';
 
     try {
-      const response = await fetch(`https://blockchain.info/rawblock/${inputValue}`);
-      const result = await response.json();
-      rawTxData = formatData(result?.tx);
+      // const response = await fetch(`https://blockchain.info/rawblock/${inputValue}`);
+      // const result = await response.json();
+      rawTxData = formatData(testTxs);
       const newPageCount = Math.ceil(rawTxData.length / itemsPerPage);
       setPageCount(newPageCount);
       refreshCurrentTxs(0);
@@ -295,9 +294,10 @@ export default function Home() {
 
       <div className="list">
         {currentTxs.map((txItem, txItemLoopIndex) => {
-          const openHeight = `${
-            Math.max(txItem.inputOutput[0].arr.length, txItem.inputOutput[1].arr.length) * 50 + 40
-          }px`;
+          const isPc = window.innerWidth >= 600;
+          const openHeight = isPc
+            ? `${Math.max(txItem.inputOutput[0].arr.length, txItem.inputOutput[1].arr.length) * 50 + 30}px`
+            : `${(txItem.inputOutput[0].arr.length + txItem.inputOutput[1].arr.length) * 50 + 80}px`;
 
           return (
             <div
@@ -307,8 +307,6 @@ export default function Home() {
                 toggle(txItemLoopIndex);
               }}>
               <div className="list-item-row-1">
-                {/* <div className="avatar" /> */}
-
                 {txItem.isInputIdExist ? (
                   <div className="avatar-tx">TX</div>
                 ) : (
@@ -363,9 +361,8 @@ export default function Home() {
                 <div className={`${openFlags[txItemLoopIndex] ? 'icon-arrow-up' : 'icon-arrow-down'}`} />
               </div>
 
-              <div
-                className={`list-item-row-2 ${openFlags[txItemLoopIndex] ? 'list-item-row-2--open' : ''}`}
-                style={{ height: `${openFlags[txItemLoopIndex] ? openHeight : '0'}` }}>
+              <div className={`list-item-row-2 ${openFlags[txItemLoopIndex] ? 'list-item-row-2--open' : ''}`}
+                   style={{ height: `${openFlags[txItemLoopIndex] ? openHeight : '0'}` }} >
                 {txItem.inputOutput.map((item, itemIndex) => {
                   return (
                     <div key={itemIndex} className="in-and-out-container">

@@ -1,9 +1,23 @@
 import './index.scss';
-import IconCopy from '../../assets/images/icon-copy.png'
+import IconCopy from '../../assets/images/icon-copy.png';
 
 export default function Index(props) {
   const copy = (text) => {
-    console.log('copy text:', text);
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement('textarea');
+      document.body.appendChild(textarea);
+      textarea.style.position = 'fixed';
+      textarea.style.clip = 'rect(0 0 0 0)';
+      textarea.style.top = '10px';
+      textarea.value = text;
+      textarea.select();
+      document.execCommand('copy', true);
+      document.body.removeChild(textarea);
+    }
+
+    alert('copy success');
   };
 
   return (

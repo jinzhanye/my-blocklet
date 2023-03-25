@@ -126,7 +126,6 @@ $border-grey: rgb(238, 238, 238);
     transition: height 0.25s ease-in 0s;
 
     &--open {
-      height: 215px;
       border-bottom: 1px solid $border-grey;
     }
   }
@@ -163,4 +162,29 @@ $border-grey: rgb(238, 238, 238);
     }
 
   }
+
+  @media (max-width: 600px) {
+    .list-item-container {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    .value-container {
+      align-items: flex-start;
+    }
+
+    .list-item-row-2 {
+      flex-direction: column;
+    }
+
+    .in-and-out-container {
+      flex: auto;
+
+      &:first-child {
+        border-right: 0;
+        border-bottom: 1px solid $border-grey;
+      }
+    }
+  }
 }
+
