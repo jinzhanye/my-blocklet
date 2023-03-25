@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import './app.scss';
@@ -16,11 +17,8 @@ function App() {
 }
 
 export default function WrappedApp() {
-  // While the blocklet is deploy to a sub path, this will be work properly.
-  const basename = window?.blocklet?.prefix || '/';
-
   return (
-    <Router basename={basename}>
+    <Router basename="/">
       <App />
     </Router>
   );
