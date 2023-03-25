@@ -1,7 +1,7 @@
 import './index.scss';
 import IconCopy from '../../assets/images/icon-copy.png';
 
-export default function Index(props) {
+export default function Copy(props) {
   const copy = (text) => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
