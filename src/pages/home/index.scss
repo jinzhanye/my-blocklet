@@ -1,16 +1,38 @@
 $grey: #999999;
+$border-grey: rgb(238, 238, 238);
 
 .flex-row {
   display: flex;
 }
 
+
+.mr4 {
+  margin-right: 4px;
+}
+
+.mr5 {
+  margin-right: 5px;
+}
+
+.grey {
+  color: $grey;
+}
+
+
 .home {
+  padding: 10px;
+
   .list {
     font-size: 13.6px;
   }
 
   .list-item {
-    /*display: flex;*/
+    border-bottom: 1px solid $border-grey;
+
+
+    &:first-child {
+      border-top: 1px solid $border-grey;
+    }
   }
 
   .list-item-row-1 {
@@ -18,34 +40,120 @@ $grey: #999999;
   }
 
   .list-item-container {
-    display: flex;
+    text-align: left;
     flex: 1;
+    display: flex;
     justify-content: space-between;
+
+
+    //display: grid;
+    //grid-template-columns: 33.333% 1fr min-content;
+    //grid-template-rows: max-content;
+    //opacity: 1;
+    //width: 100%;
+    //gap: 0 5px;
   }
 
-  .list-item-base {
+  //.list-item-base {
+  //  > span {
+  //    margin-right: 5px;
+  //  }
+  //}
 
-  }
 
-  .avatar {
-    margin: 0 16px;
-    flex-shrink: 0;
-    width: 42px;
-    height: 42px;
-    background: darkgreen;
+
+  @mixin avatar-common {
+    height: 40px;
+    width: 40px;
     border-radius: 50%;
+    border: 1px solid rgb(238, 238, 238);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .icon-arrow {
+  .avatar-tx {
+    @include avatar-common();
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .avatar-block-reward {
+    @include avatar-common();
+
+    &-icon {
+      width: 20px;
+      height: 20px;
+      background-color: rgb(0, 0, 0);
+      -webkit-mask-image: url(../../assets/images/avatar-block-reward.svg);
+      -webkit-mask-position: center center;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-size: contain;
+      display: inline-flex;
+      margin: 0;
+    }
+  }
+
+  @mixin icon-arrow-common($bg-url) {
     margin: 0 8px;
     flex-shrink: 0;
     width: 30px;
     height: 40px;
-    background: darkgreen;
-    border-radius: 50%;
+    cursor: pointer;
+    background: #fff url($bg-url) center center no-repeat;
+    background-size: 14px;
+  }
+
+  .icon-arrow-up {
+    @include icon-arrow-common('../../assets/images/icon-arrow-up.png')
+  }
+
+  .icon-arrow-down {
+    @include icon-arrow-common('../../assets/images/icon-arrow-down.png')
+  }
+
+  .value-container {
+    justify-content: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .fee-label {
+      color: rgb(244, 91, 105);
+    }
   }
 
   .list-item-row-2 {
     display: flex;
+    height: 0;
+    overflow: hidden;
+    transition: height 0.25s ease-in 0s;
+
+    &--open {
+      border-top: 1px solid $border-grey;
+      height: 215px;
+    }
+  }
+
+  .in-and-out-container {
+    padding-left: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    flex-shrink: 0;
+
+    &:first-child {
+      border-right: 1px solid $border-grey;
+    }
+  }
+
+  .record-container {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
 }

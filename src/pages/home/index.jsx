@@ -1,6 +1,7 @@
-import './index.scss';
-import Copy from '../../components/copy'
+import { useState } from 'react';
 import dayjs from 'dayjs';
+import './index.scss';
+import Copy from '../../components/copy';
 
 let testTx = [
   {
@@ -230,6 +231,8 @@ function formatData(rawData) {
 }
 
 export default function Index() {
+  const [openFlags, setOpenFlags] = useState(new Array(10).fill(false));
+
   const arr = formatData(testTx);
   // const hashVal = '00000000000000000007878ec04bb2b2e12317804810f4c26033585b3f81ffaa';
   // fetch(`https://blockchain.info/rawblock/${hashVal}`)
@@ -237,6 +240,13 @@ export default function Index() {
   //   .then((result) => {
   //     console.log('result', result);
   //   });
+
+  const toggle = (txItemIndex) => {
+    const newOpenFlags = [...openFlags];
+    newOpenFlags[txItemIndex] = !newOpenFlags[txItemIndex];
+    console.log('newOpenFlags:', newOpenFlags);
+    setOpenFlags(newOpenFlags);
+  };
 
   return (
     <div className="home">
@@ -246,59 +256,78 @@ export default function Index() {
       </div>
 
       <div className="list">
-        {arr.map((txItem, index) => {
+        {arr.map((txItem, txItemIndex) => {
+          const openHeight = `${
+            Math.max(txItem.inputOutput[0].arr.length, txItem.inputOutput[1].arr.length) * 50 + 40
+          }px`;
+
           return (
-            <div className="list-item" key={index}>
+            <div
+              className="list-item"
+              key={txItemIndex}
+              onClick={() => {
+                toggle(txItemIndex);
+              }}>
               <div className="list-item-row-1">
-                <div className="avatar" />
+                {/* <div className="avatar" /> */}
+
+                {txItemIndex.isInputIdExist ? (
+                  <div className="avatar-tx">TX</div>
+                ) : (
+                  <div className="avatar-block-reward">
+                    <div className="avatar-block-reward-icon"></div>
+                  </div>
+                )}
 
                 <div className="list-item-container">
                   <div>
                     <div className="list-item-base">
-                      <span>{index}</span>
-                      <span>ID:</span>
-                      <Copy text={txItem.id}/>
+                      <span className="mr4">{txItemIndex}</span>
+                      <span className="grey mr5">ID:</span>
+                      <Copy text={txItem.id} />
                     </div>
 
-                    <div>{txItem.timeText}</div>
+                    <div className="grey">{txItem.timeText}</div>
                   </div>
 
                   <div>
                     <div>
-                      <span>From</span>
-                      <span>{txItem.inputText}</span>
+                      <span className="mr5">From</span>
+                      <span className="grey">{txItem.inputText}</span>
                     </div>
 
                     <div>
-                      <span>To</span>
-                      <span>{txItem.outputText}</span>
+                      <span className="mr5">To</span>
+                      <span className="grey">{txItem.outputText}</span>
                     </div>
                   </div>
 
-                  <div>
+                  <div className="value-container">
                     <div>
                       <div>{txItem.btcText}</div>
                     </div>
 
                     <div>
-                      <span>Fee</span>
+                      <span className="fee-label mr4">Fee</span>
                       <span>{txItem.feeText}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="icon-arrow" />
+                <div className={`${openFlags[txItemIndex] ? 'icon-arrow-up' : 'icon-arrow-down'}`}/>
               </div>
 
-              <div className="list-item-row-2">
+              <div
+                className={`list-item-row-2 ${openFlags[txItemIndex] ? 'list-item-row-2--open' : ''}`}
+                style={{ height: `${openFlags[txItemIndex] ? openHeight : '0'}` }}>
                 {txItem.inputOutput.map((item, itemIndex) => {
                   return (
-                    <div key={itemIndex}>
+                    <div key={itemIndex} className="in-and-out-container">
                       <strong>{item.title}</strong>
                       <div>
                         {item.arr.map((record, recordIndex) => {
                           return (
-                            <div key={recordIndex}>
+                            <div key={recordIndex} className="record-container">
                               <strong>{recordIndex + 1}</strong>
                               <div>
                                 <div>{record.id}</div>

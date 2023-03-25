@@ -1,4 +1,5 @@
 import './index.scss';
+import IconCopy from '../../assets/images/icon-copy.png'
 
 export default function Index(props) {
   const copy = (text) => {
@@ -11,7 +12,8 @@ export default function Index(props) {
       onClick={() => {
         copy(props.text);
       }}>
-      {props.text}
+      <span>{props.text}</span>
+      <img src={IconCopy} />
     </div>
   );
 }
