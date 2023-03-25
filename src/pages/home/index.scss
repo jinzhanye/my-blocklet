@@ -6,14 +6,26 @@ $border-grey: rgb(238, 238, 238);
   .search-container {
     display: flex;
     margin-bottom: 20px;
+    padding: 0 12px;
 
     > input {
-      width: 80%;
+      flex: 1;
+      margin-right: 10px;
+      border-radius: 4px;
     }
 
     .search-button {
+      font-size: 14px;
+      color: #fff;
       cursor: pointer;
-      //background: ;
+      background: #000;
+      border-radius: 4px;
+      box-sizing: border-box;
+      height: 32px;
+      padding: 8px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 

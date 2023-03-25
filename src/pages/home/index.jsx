@@ -118,17 +118,16 @@ function formatId(rawData) {
   if (!rawData) {
     return '-';
   }
-  // '12345678901'.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
   return `${rawData.substring(0, 4)}-${rawData.substring(rawData.length - 4, rawData.length)}`;
 }
 
 function formatInputBaseInfo(arr) {
   let text = '';
   let isIdExist = false;
-  if (!arr || !arr.length) {
+  if (!arr || !arr.length || (arr.length === 1 && !arr[0]?.prev_out?.addr)) {
     text = 'Block Reward';
-  } else if (arr.length === 1) {
-    text = formatId(arr[0].witness);
+  } else if (arr.length === 1 && arr[0]?.prev_out?.addr) {
+    text = formatId(arr[0]?.prev_out?.addr);
     isIdExist = true;
   } else {
     text = `${arr.length} Inputs`;
@@ -163,9 +162,9 @@ function formatInputArr(arr) {
 
   return (arr || []).map((item) => {
     return {
-      isIdExist: !!item.addr,
-      id: item.addr || placeholder,
-      btcText: formatBTC(item.value),
+      isIdExist: !!item?.prev_out?.addr,
+      id: item?.prev_out?.addr || placeholder,
+      btcText: formatBTC(item?.prev_out?.value),
     };
   });
 }
@@ -236,11 +235,15 @@ function formatData(rawData) {
   });
 }
 
+let rawTxData;
+
 export default function Home() {
   const [inputValue, setInputValue] = useState('');
-  const [openFlags, setOpenFlags] = useState(new Array(10).fill(false));
-  const [txs, setTxs] = useState(formatData(testTxs));
-  // setTxs(formatData(testTxs));
+  const [openFlags, setOpenFlags] = useState();
+  const [currentTxs, setCurrentTxs] = useState([]);
+
+  const itemsPerPage = 6;
+  const [pageCount, setPageCount] = useState(0);
 
   const toggle = (txItemIndex) => {
     const newOpenFlags = [...openFlags];
@@ -252,25 +255,27 @@ export default function Home() {
     // const hashVal = '00000000000000000007878ec04bb2b2e12317804810f4c26033585b3f81ffaa';
 
     try {
-      // const response = await fetch(`https://blockchain.info/rawblock/${inputValue}`);
-      // const result = await response.json();
-      // setTxs(formatData(result?.tx));
-      setTxs(formatData(testTxs));
+      const response = await fetch(`https://blockchain.info/rawblock/${inputValue}`);
+      const result = await response.json();
+      rawTxData = formatData(result?.tx);
+      const newPageCount = Math.ceil(rawTxData.length / itemsPerPage);
+      setPageCount(newPageCount);
+      refreshCurrentTxs(0);
     } catch (err) {
       alert('fetch data error, please try again');
     }
   };
 
-  const itemsPerPage = 6;
-  const [itemOffset, setItemOffset] = useState(0);
-  const endOffset = itemOffset + itemsPerPage;
-  const currentTxs = txs.slice(itemOffset, endOffset);
-
-  const pageCount = Math.ceil(txs.length / itemsPerPage);
+  const refreshCurrentTxs = (newOffset) => {
+    const endOffset = newOffset + itemsPerPage;
+    const newCurrentTxs = rawTxData.slice(newOffset, endOffset);
+    setOpenFlags(new Array(newCurrentTxs.length).fill(false));
+    setCurrentTxs(newCurrentTxs);
+  };
 
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % txs.length;
-    setItemOffset(newOffset);
+    const newOffset = (event.selected * itemsPerPage) % rawTxData.length;
+    refreshCurrentTxs(newOffset);
   };
 
   return (
@@ -326,12 +331,20 @@ export default function Home() {
                   <div>
                     <div>
                       <span className="mr5">From</span>
-                      <span className="grey">{txItem.inputText}</span>
+                      {txItem.isInputIdExist ? (
+                        <Copy text={txItem.inputText} />
+                      ) : (
+                        <span className="grey">{txItem.inputText}</span>
+                      )}
                     </div>
 
                     <div>
                       <span className="mr5">To</span>
-                      <span className="grey">{txItem.outputText}</span>
+                      {txItem.isOutputIdExist ? (
+                        <Copy text={txItem.outputText} />
+                      ) : (
+                        <span className="grey">{txItem.outputText}</span>
+                      )}
                     </div>
                   </div>
 
@@ -380,17 +393,19 @@ export default function Home() {
         })}
       </div>
 
-      <div className="pager">
-        <ReactPaginate
-          breakLabel="..."
-          nextLabel=">"
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={3}
-          pageCount={pageCount}
-          previousLabel="<"
-          renderOnZeroPageCount={null}
-        />
-      </div>
+      {pageCount > 0 ? (
+        <div className="pager">
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel=">"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={3}
+            pageCount={pageCount}
+            previousLabel="<"
+            renderOnZeroPageCount={null}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
