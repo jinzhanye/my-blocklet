@@ -1,3 +1,5 @@
+import './index.scss';
+import Copy from '../../components/copy'
 import dayjs from 'dayjs';
 
 let testTx = [
@@ -150,13 +152,25 @@ function formatOutputBaseInfo(arr) {
   };
 }
 
-function formatInputOutputArr(arr, isInput) {
-  const placeholder = isInput ? 'Block Reward' : 'Unknown';
+function formatInputArr(arr) {
+  const placeholder = 'Block Reward';
 
   return (arr || []).map((item) => {
     return {
-      isIdExist: !!item.witness,
-      id: item.witness || placeholder,
+      isIdExist: !!item.addr,
+      id: item.addr || placeholder,
+      btcText: formatBTC(item.value),
+    };
+  });
+}
+
+function formatOutputArr(arr) {
+  const placeholder = 'Unknown';
+
+  return (arr || []).map((item) => {
+    return {
+      isIdExist: !!item.addr,
+      id: item.addr || placeholder,
       btcText: formatBTC(item.value),
     };
   });
@@ -204,18 +218,18 @@ function formatData(rawData) {
       inputOutput: [
         {
           title: 'From',
-          arr: formatInputOutputArr(inputs, true),
+          arr: formatInputArr(inputs),
         },
         {
           title: 'To',
-          arr: formatInputOutputArr(out, false),
+          arr: formatOutputArr(out),
         },
       ],
     };
   });
 }
 
-function Home() {
+export default function Index() {
   const arr = formatData(testTx);
   // const hashVal = '00000000000000000007878ec04bb2b2e12317804810f4c26033585b3f81ffaa';
   // fetch(`https://blockchain.info/rawblock/${hashVal}`)
@@ -225,7 +239,7 @@ function Home() {
   //   });
 
   return (
-    <div>
+    <div className="home">
       <div>
         <input type="text" />
         <div className="search-button">Search</div>
@@ -238,12 +252,12 @@ function Home() {
               <div className="list-item-row-1">
                 <div className="avatar" />
 
-                <div className="list-item-info">
+                <div className="list-item-container">
                   <div>
-                    <div>
-                      <div>{index + 1}</div>
-                      <div>ID:</div>
-                      <div>{txItem.id}</div>
+                    <div className="list-item-base">
+                      <span>{index}</span>
+                      <span>ID:</span>
+                      <Copy text={txItem.id}/>
                     </div>
 
                     <div>{txItem.timeText}</div>
@@ -251,13 +265,13 @@ function Home() {
 
                   <div>
                     <div>
-                      <div>From</div>
-                      <div>{txItem.inputText}</div>
+                      <span>From</span>
+                      <span>{txItem.inputText}</span>
                     </div>
 
                     <div>
-                      <div>To</div>
-                      <div>{txItem.outputText}</div>
+                      <span>To</span>
+                      <span>{txItem.outputText}</span>
                     </div>
                   </div>
 
@@ -267,8 +281,8 @@ function Home() {
                     </div>
 
                     <div>
-                      <div>Fee</div>
-                      <div>{txItem.feeText}</div>
+                      <span>Fee</span>
+                      <span>{txItem.feeText}</span>
                     </div>
                   </div>
                 </div>
@@ -305,5 +319,3 @@ function Home() {
     </div>
   );
 }
-
-export default Home;

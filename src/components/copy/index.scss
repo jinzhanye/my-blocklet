@@ -1,0 +1,9 @@
+.copy {
+  display: inline-flex;
+  color: #ED9B60;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
