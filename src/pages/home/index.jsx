@@ -198,6 +198,7 @@ let rawTxData;
 export default function Home() {
   const [inputValue, setInputValue] = useState('');
   const [blockDetail, setBlockDetail] = useState();
+  const [currentPage, setCurrentPage] = useState(0);
   const [openFlags, setOpenFlags] = useState();
   const [loading, setLoading] = useState(false);
   const [currentTxs, setCurrentTxs] = useState([]);
@@ -228,6 +229,7 @@ export default function Home() {
 
       rawTxData = result?.tx;
       const newPageCount = Math.ceil(rawTxData.length / itemsPerPage);
+      setCurrentPage(0);
       setPageCount(newPageCount);
       refreshCurrentTxs(0);
     } catch (err) {
@@ -246,6 +248,7 @@ export default function Home() {
   };
 
   const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
     const newOffset = (event.selected * itemsPerPage) % rawTxData.length;
     refreshCurrentTxs(newOffset);
   };
@@ -275,6 +278,7 @@ export default function Home() {
               {blockDetail.left.map((item) => {
                 return (
                   <BlockDetailItem
+                    key={item.label}
                     label={item.label}
                     value={item.value}
                     showCopy={item.showCopy}
@@ -287,6 +291,7 @@ export default function Home() {
               {blockDetail.right.map((item) => {
                 return (
                   <BlockDetailItem
+                    key={item.label}
                     label={item.label}
                     value={item.value}
                     showCopy={item.showCopy}
@@ -413,6 +418,7 @@ export default function Home() {
               pageRangeDisplayed={3}
               pageCount={pageCount}
               previousLabel="<"
+              forcePage={currentPage}
               renderOnZeroPageCount={null}
             />
           </div>
