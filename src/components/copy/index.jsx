@@ -3,7 +3,12 @@ import './index.scss';
 import IconCopy from '../../assets/images/icon-copy.png';
 
 export default function Copy(props) {
-  const copy = (text) => {
+  const copy = () => {
+    let { text } = props;
+    if (props.copyText !== null && props.copyText !== undefined) {
+      text = props.copyText;
+    }
+
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
     } else {
@@ -26,7 +31,7 @@ export default function Copy(props) {
       className="copy"
       onClick={(evt) => {
         evt.stopPropagation();
-        copy(props.text);
+        copy();
       }}>
       <span>{props.text}</span>
       <img src={IconCopy} />

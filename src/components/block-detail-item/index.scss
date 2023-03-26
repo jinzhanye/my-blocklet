@@ -1,0 +1,14 @@
+.block-detail-item {
+  display: flex;
+  font-size: 14px;
+
+  > div {
+    &:first-child {
+      flex: 4;
+    }
+    &:last-child {
+      flex: 6;
+      color: rgb(153, 153, 153);
+    }
+  }
+}
